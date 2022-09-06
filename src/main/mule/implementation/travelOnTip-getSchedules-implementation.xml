@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="travelOnTip-getSchedules-implementationSub_Flow" doc:id="2b424f03-4b4e-4029-a620-d3ac8dc00db1" >
+		<http:request method="GET" doc:name="Request" doc:id="f6411207-cbd0-42fd-9b6d-c6625ea36032" config-ref="HTTP_Request_configuration" path="${http.requester.schedulesPath}">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	transactionId : vars.transactionId
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="428ddb97-e8fb-484f-80b8-b6fc372c07c6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+ payload map ((item, index) -> {
+    "availableSeats": item.availableSeats,
+    "departureDateTime": item.departureDateTime,
+    "travelRoute": {
+      "destinationLocation": {
+        "locationCode": item.toLocation
+      },
+      "originLocation": {
+        "locationCode": item.fromLocation
+      }
+    }
+ }
+ )
+
+ ]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+</mule>

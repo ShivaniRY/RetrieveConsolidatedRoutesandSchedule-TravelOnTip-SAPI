@@ -1,0 +1,62 @@
+#%RAML 1.0
+title: RetrieveConsolidatedRoutesandSchedule-TravelOnTip-SAPI
+description: This API will fectch Routes And Schedules from TravelOnTip System
+uses:
+  common: /libraries/common/common-business-library.raml
+  routes: /libraries/routes/routes-business-library.raml
+  schedules:  /libraries/schedules/schedules-business-library.raml
+/{transportType}:
+  /{transportCompany}:
+    /routes:
+      get:
+        is:
+          - common.transactionId
+
+        responses:
+          200:
+            body:
+             application/json:
+               type: routes.getroutes
+               example: !include /libraries/routes/examples/getRoutes-200response-example.json
+          400:
+            body:
+              application/json:
+                type: common.commonError
+                example: !include /libraries/common/examples/400response-example.json
+          404:
+            body:
+              application/json:
+                type: common.commonError
+                example: !include /libraries/common/examples/404response-example.json
+          500:
+            body:
+              application/json:
+                type: common.commonError
+                example: !include /libraries/common/examples/500response-example.json
+    /schedules:
+      get:
+        is:
+          - common.transactionId
+          - common.destinationLocationCode
+          - common.departureLocationCode
+        responses:
+          200:
+            body:
+              application/json:
+                type: schedules.getschedules     
+                example: !include /libraries/schedules/examples/getSchedules-200response-example.json
+          400:
+            body:
+              application/json:
+                type: common.commonError
+                example: !include /libraries/common/examples/400response-example.json
+          404:
+            body:
+              application/json:
+                type: common.commonError
+                example: !include /libraries/common/examples/404response-example.json
+          500:
+            body:
+              application/json:
+                type: common.commonError
+                example: !include /libraries/common/examples/500response-example.json
